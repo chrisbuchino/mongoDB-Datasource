@@ -961,16 +961,17 @@ class MongodbSource extends DboSource {
 			));
 			$return = $this->_db
 				->command($options);
-			if ($this->fullDebug) {
-				if ($return['ok']) {
-					$count = 1;
-					if ($this->config['set_string_id'] && !empty($return['value']['_id']) && is_object($return['value']['_id'])) {
-						$return['value']['_id'] = $return['value']['_id']->__toString();
-					}
-					$return[][$Model->alias] = $return['value'];
-				} else {
-					$count = 0;
+			if ($return['ok']) {
+				$count = 1;
+				if ($this->config['set_string_id'] && !empty($return['value']['_id']) && is_object($return['value']['_id'])) {
+					$return['value']['_id'] = $return['value']['_id']->__toString();
 				}
+				$return[][$Model->alias] = $return['value'];
+			} else {
+				$count = 0;
+			}
+				
+			if ($this->fullDebug) {
 				$this->logQuery("db.runCommand( :options )",
 					array('options' => array_filter($options), 'count' => $count)
 				);
